@@ -4,7 +4,9 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Objects;
 
-public class Produto {
+import br.com.onebox.app.exception.ProdutoException;
+
+public class Produto implements ValidaCampos {
 
 	private static final BigDecimal PERCENTUAL_TOTAL_DE_IMPOSTOS = new BigDecimal(0.40);
 
@@ -14,14 +16,36 @@ public class Produto {
 	private BigDecimal precoUnitario;
 	private Integer quantidade;
 	private Categoria categoria;
+	private Integer quantidadeEmEstoque;
 
 	public Produto(String nome, String descricao, BigDecimal precoUnitario, Integer quantidade, Categoria categoria) {
-		super();
 		this.nome = nome;
 		this.descricao = descricao;
 		this.precoUnitario = precoUnitario;
 		this.quantidade = quantidade;
 		this.categoria = categoria;
+		validar();
+	}
+	
+	public Produto(String nome, String descricao, BigDecimal precoUnitario, Integer quantidade, Categoria categoria, Integer quantidadeEmEstoque) {
+		this.nome = nome;
+		this.descricao = descricao;
+		this.precoUnitario = precoUnitario;
+		this.quantidade = quantidade;
+		this.categoria = categoria;
+		this.quantidadeEmEstoque = quantidadeEmEstoque;
+		validar();
+	}
+
+	public Produto(Long id, String nome, String descricao, BigDecimal precoUnitario, Integer quantidade,
+			Categoria categoria) {
+		this.id = id;
+		this.nome = nome;
+		this.descricao = descricao;
+		this.precoUnitario = precoUnitario;
+		this.quantidade = quantidade;
+		this.categoria = categoria;
+		validar();
 	}
 
 	@Override
@@ -62,6 +86,7 @@ public class Produto {
 
 	public void setNome(String nome) {
 		this.nome = nome;
+		validar();
 	}
 
 	public String getDescricao() {
@@ -74,6 +99,7 @@ public class Produto {
 
 	public void setPrecoUnitario(BigDecimal precoUnitario) {
 		this.precoUnitario = precoUnitario;
+		validar();
 	}
 
 	public Integer getQuantidade() {
@@ -92,15 +118,35 @@ public class Produto {
 		this.categoria = categoria;
 	}
 
+	public Integer getQuantidadeEmEstoque() {
+		return quantidadeEmEstoque;
+	}
+
+	public void setQuantidadeEmEstoque(Integer quantidadeEmEstoque) {
+		this.quantidadeEmEstoque = quantidadeEmEstoque;
+	}
+
 	public BigDecimal getTotalEmEstoque() {
 		return this.precoUnitario.multiply(new BigDecimal(this.quantidade)).setScale(2, RoundingMode.HALF_UP);
 	}
 
 	public BigDecimal getPrecoComImposto() {
-
 		BigDecimal totalComImposto = precoUnitario.add(precoUnitario.multiply(PERCENTUAL_TOTAL_DE_IMPOSTOS));
-
 		return totalComImposto.setScale(2, RoundingMode.HALF_UP);
+	}
+	
+	public BigDecimal getValorTotalEmEstoque() {
+        return this.precoUnitario.multiply(new BigDecimal(this.quantidadeEmEstoque)).setScale(2, RoundingMode.HALF_UP);
+    }
+
+	@Override
+	public void validar() throws ProdutoException {
+		if (this.nome == "")
+			throw new ProdutoException("nome vazio");
+		if (this.nome == null)
+			throw new ProdutoException("nome nulo");
+		if (this.precoUnitario.compareTo(BigDecimal.ZERO) <= 0)
+			throw new ProdutoException("O preço do produto não pode ser menor ou igual a zero");
 	}
 
 }

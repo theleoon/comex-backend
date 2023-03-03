@@ -9,13 +9,18 @@ public class CategoriaTests {
 	}
 
 	private static void testaCategoria() {
-		Categoria primeiraCategoria = new Categoria("Informática");
-		Categoria segundaCategoria = new Categoria("Livros");
-		Categoria terceiraCategoria = new Categoria("Móveis");
 		
-		mostraCategoria(primeiraCategoria);
-		mostraCategoria(segundaCategoria);
-		mostraCategoria(terceiraCategoria);
+		try {
+			Categoria primeiraCategoria = new Categoria("Informática");
+			Categoria segundaCategoria = new Categoria("Livros");
+			Categoria terceiraCategoria = new Categoria("");
+
+			mostraCategoria(primeiraCategoria);
+			mostraCategoria(segundaCategoria);
+			mostraCategoria(terceiraCategoria);
+		} catch (Exception e) {
+			System.out.println(e);
+		}
 	}
 
 	private static void mostraCategoria(Categoria categoria) {

@@ -1,6 +1,8 @@
 package br.com.onebox.app.domain;
 
-public class Categoria {
+import br.com.onebox.app.exception.CategoriaException;
+
+public class Categoria implements ValidaCampos {
 	
 	private Long id;
 	private String nome;
@@ -8,6 +10,18 @@ public class Categoria {
 	
 	public Categoria(String nome) {
 		this.nome = nome;
+		validar();
+	}
+	
+	public Categoria(Long id, String nome, Boolean status) {
+
+		if (id == null && nome == null && status == null) {
+			System.out.println("Dados insuficientes");
+		}
+		
+		this.id = id;
+		this.nome = nome;
+		this.status = status;
 	}
 
 	@Override
@@ -44,5 +58,10 @@ public class Categoria {
 		}
 	}
 
-
+	@Override
+	public void validar() throws CategoriaException {
+		if (this.nome == "") new Exception("nome vazio");
+		if (this.nome == null) new Exception("nome nulo");
+		if (this.status == Boolean.FALSE) new Exception("Status inicial inválido");
+	}
 }
